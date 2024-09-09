@@ -1,0 +1,2619 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{FinalThesis}
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb. 
+    \makeatletter
+        \newbox\Wrappedcontinuationbox 
+        \newbox\Wrappedvisiblespacebox 
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}} 
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}} 
+        \newcommand*\Wrappedcontinuationindent {3ex } 
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox} 
+        % Take advantage of the already applied Pygments mark-up to insert 
+        % potential linebreaks for TeX processing. 
+        %        {, <, #, %, $, ' and ": go to next line. 
+        %        _, }, ^, &, >, - and ~: stay at end of broken line. 
+        % Use of \textquotesingle for straight quote. 
+        \newcommand*\Wrappedbreaksatspecials {% 
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}% 
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}% 
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}% 
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}% 
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}% 
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}% 
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}% 
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}% 
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}% 
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}% 
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}% 
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}% 
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}% 
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}% 
+        } 
+        % Some characters . , ; ? ! / are not pygmentized. 
+        % This macro makes them "active" and they will insert potential linebreaks 
+        \newcommand*\Wrappedbreaksatpunct {% 
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}% 
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}% 
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}% 
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}% 
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}% 
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}% 
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}% 
+            \catcode`\.\active
+            \catcode`\,\active 
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active 
+            \lccode`\~`\~ 	
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+        
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active 	
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+    
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{1}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{cluster} \PY{k+kn}{import} \PY{n}{KMeans}
+\PY{n}{room} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{052}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{room\PYZus{}type} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{open\PYZus{}space}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{outlier\PYZus{}threshold} \PY{o}{=} \PY{l+m+mf}{40.0}
+
+\PY{k}{def} \PY{n+nf}{load\PYZus{}datasets}\PY{p}{(}\PY{n}{room}\PY{p}{)}\PY{p}{:}
+    \PY{n}{datasets} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{n}{dataset\PYZus{}files} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensors\PYZhy{}Thingy\PYZhy{}eCO2\PYZhy{}sampled10min.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensors\PYZhy{}Thingy\PYZhy{}sound\PYZhy{}sampled10min.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensors\PYZhy{}Thingy\PYZhy{}color\PYZus{}b\PYZhy{}sampled10min.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                 \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensors\PYZhy{}Thingy\PYZhy{}color\PYZus{}c\PYZhy{}sampled10min.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensors\PYZhy{}Thingy\PYZhy{}color\PYZus{}g\PYZhy{}sampled10min.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensors\PYZhy{}Thingy\PYZhy{}color\PYZus{}r\PYZhy{}sampled10min.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+    \PY{k}{for} \PY{n}{file} \PY{o+ow}{in} \PY{n}{dataset\PYZus{}files}\PY{p}{:}
+        \PY{n}{dataset} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{read\PYZus{}csv}\PY{p}{(}\PY{n}{file}\PY{p}{)}
+        \PY{n}{columns\PYZus{}with\PYZus{}001} \PY{o}{=} \PY{p}{[}\PY{n}{col} \PY{k}{for} \PY{n}{col} \PY{o+ow}{in} \PY{n}{dataset}\PY{o}{.}\PY{n}{columns} \PY{k}{if} \PY{n}{room} \PY{o+ow}{in} \PY{n}{col}\PY{p}{]}
+        \PY{k}{if} \PY{n}{columns\PYZus{}with\PYZus{}001}\PY{p}{:}
+            \PY{n}{dataset\PYZus{}001} \PY{o}{=} \PY{n}{dataset}\PY{p}{[}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time\PYZus{}ms}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{+} \PY{n}{columns\PYZus{}with\PYZus{}001}\PY{p}{]} 
+            \PY{n}{datasets}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{dataset\PYZus{}001}\PY{p}{)}
+    \PY{k}{return} \PY{n}{datasets}
+
+\PY{n}{datasets} \PY{o}{=} \PY{n}{load\PYZus{}datasets}\PY{p}{(}\PY{n}{room}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{2}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{preprocessing} \PY{k+kn}{import} \PY{n}{MinMaxScaler}
+
+
+\PY{k}{def} \PY{n+nf}{preprocess\PYZus{}data}\PY{p}{(}\PY{n}{datasets}\PY{p}{,} \PY{n}{room}\PY{p}{)}\PY{p}{:}
+    \PY{n}{scaler} \PY{o}{=} \PY{n}{MinMaxScaler}\PY{p}{(}\PY{n}{feature\PYZus{}range}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{100}\PY{p}{)}\PY{p}{)}
+
+    \PY{n}{combined\PYZus{}dataset} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{n}{datasets}\PY{p}{)}
+        
+    \PY{n}{columns\PYZus{}to\PYZus{}scale} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}eCO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}sound}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}g}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+                        \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}b}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}c}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+    \PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{n}{columns\PYZus{}to\PYZus{}scale}\PY{p}{]} \PY{o}{=} \PY{n}{scaler}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{n}{columns\PYZus{}to\PYZus{}scale}\PY{p}{]}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Set \PYZsq{}time\PYZus{}ms\PYZsq{} column as datetime and fill missing values}
+    \PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time\PYZus{}ms}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{to\PYZus{}datetime}\PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time\PYZus{}ms}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+    \PY{n}{combined\PYZus{}dataset} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Set \PYZsq{}time\PYZus{}ms\PYZsq{} as the index}
+    \PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{set\PYZus{}index}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time\PYZus{}ms}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{inplace}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Check for duplicates in the index (timestamps) and handle them if found}
+    \PY{k}{if} \PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{duplicated}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{any}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{combined\PYZus{}dataset} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index}\PY{p}{)}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{p}{)}
+
+    \PY{k}{return} \PY{n}{combined\PYZus{}dataset}
+
+\PY{n}{combined\PYZus{}dataset} \PY{o}{=} \PY{n}{preprocess\PYZus{}data}\PY{p}{(}\PY{n}{datasets}\PY{p}{,}\PY{n}{room}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{3}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{pivot\PYZus{}and\PYZus{}resample}\PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{p}{)}\PY{p}{:}
+    \PY{n}{sensor\PYZus{}columns} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{columns}
+    \PY{c+c1}{\PYZsh{} Create a new column that represents the minute within the hour}
+    \PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{minute}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{minute}
+
+    \PY{c+c1}{\PYZsh{} Pivot the data to have columns for each sensor and minute interval}
+    \PY{n}{pivot\PYZus{}table} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{pivot\PYZus{}table}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{minute}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{values}\PY{o}{=}\PY{n}{sensor\PYZus{}columns}\PY{p}{,} \PY{n}{aggfunc}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sum}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{n}{pivot\PYZus{}table} \PY{o}{=} \PY{n}{pivot\PYZus{}table}\PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Resample the pivoted data to 1\PYZhy{}hour intervals and take the sum}
+    \PY{n}{new\PYZus{}features\PYZus{}df} \PY{o}{=} \PY{n}{pivot\PYZus{}table}\PY{o}{.}\PY{n}{resample}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{1H}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} 
+
+    \PY{k}{return} \PY{n}{new\PYZus{}features\PYZus{}df}
+
+\PY{n}{new\PYZus{}features\PYZus{}df} \PY{o}{=} \PY{n}{pivot\PYZus{}and\PYZus{}resample}\PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{4}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+
+\PY{c+c1}{\PYZsh{} Calculate WCSS for different values of k}
+\PY{n}{wcss} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{11}\PY{p}{)}\PY{p}{:}
+    \PY{n}{kmeans} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters}\PY{o}{=}\PY{n}{k}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+    \PY{n}{kmeans}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{)}
+    \PY{n}{wcss}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{kmeans}\PY{o}{.}\PY{n}{inertia\PYZus{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Find the k with the highest elbow method score}
+\PY{n}{deltas} \PY{o}{=} \PY{p}{[}\PY{n}{wcss}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{wcss}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{wcss}\PY{p}{)}\PY{p}{)}\PY{p}{]}
+\PY{n}{optimal\PYZus{}clusters\PYZus{}elbow} \PY{o}{=} \PY{n}{deltas}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n}{deltas}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{2}
+
+\PY{c+c1}{\PYZsh{} Plot the Elbow Method graph}
+\PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{11}\PY{p}{)}\PY{p}{,} \PY{n}{wcss}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{linestyle}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{}\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Number of Clusters (k)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Within\PYZhy{}Cluster Sum of Squares (WCSS)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Elbow Method}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{grid}\PY{p}{(}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{optimal\PYZus{}clusters\PYZus{}elbow}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}The chosen k value should be based on the point where the decrease in WCSS becomes less significant, }
+\PY{c+c1}{\PYZsh{}indicating that adding more clusters doesn\PYZsq{}t significantly improve the clustering quality.}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_3_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+8
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{5}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{silhouette\PYZus{}score}
+
+\PY{k}{def} \PY{n+nf}{silhouete\PYZus{}number}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{}Silhouette analysis measures how similar each data point in one cluster is to the data points in the neighboring clusters.}
+    \PY{n}{silhouette\PYZus{}scores} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{11}\PY{p}{)}\PY{p}{:}
+        \PY{n}{kmeans} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters}\PY{o}{=}\PY{n}{k}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+        \PY{n}{cluster\PYZus{}labels} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{fit\PYZus{}predict}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{)}
+        \PY{n}{silhouette\PYZus{}avg} \PY{o}{=} \PY{n}{silhouette\PYZus{}score}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{,} \PY{n}{cluster\PYZus{}labels}\PY{p}{)}
+        \PY{n}{silhouette\PYZus{}scores}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{silhouette\PYZus{}avg}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Find the k with the highest silhouette score}
+    \PY{n}{optimal\PYZus{}clusters} \PY{o}{=} \PY{n}{silhouette\PYZus{}scores}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n}{silhouette\PYZus{}scores}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{2}  \PY{c+c1}{\PYZsh{} Add 2 because k starts from 2}
+    \PY{k}{return} \PY{n}{optimal\PYZus{}clusters}
+
+\PY{n}{cluster\PYZus{}num} \PY{o}{=} \PY{n}{silhouete\PYZus{}number}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{cluster\PYZus{}num}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+2
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{6}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{combine\PYZus{}scores}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{silhouette\PYZus{}scores} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{n}{inertias} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{k} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{11}\PY{p}{)}\PY{p}{:}
+        \PY{n}{kmeans} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters}\PY{o}{=}\PY{n}{k}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+        \PY{n}{cluster\PYZus{}labels} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{fit\PYZus{}predict}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{)}
+        \PY{n}{silhouette\PYZus{}avg} \PY{o}{=} \PY{n}{silhouette\PYZus{}score}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{,} \PY{n}{cluster\PYZus{}labels}\PY{p}{)}
+        \PY{n}{silhouette\PYZus{}scores}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{silhouette\PYZus{}avg}\PY{p}{)}
+        \PY{n}{inertias}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{kmeans}\PY{o}{.}\PY{n}{inertia\PYZus{}}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Sum of squared distances to closest cluster center}
+
+    \PY{n}{deltas} \PY{o}{=} \PY{p}{[}\PY{n}{inertias}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{inertias}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{inertias}\PY{p}{)}\PY{p}{)}\PY{p}{]}
+    \PY{c+c1}{\PYZsh{} Calculate the average score of silhouette and elbow method}
+    \PY{n}{combined\PYZus{}scores} \PY{o}{=} \PY{p}{[}\PY{p}{(}\PY{n}{silhouette\PYZus{}scores}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{+} \PY{n}{deltas}\PY{p}{[}\PY{n}{i}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)} \PY{o}{/} \PY{l+m+mi}{2} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{silhouette\PYZus{}scores}\PY{p}{)}\PY{p}{)}\PY{p}{]}
+
+    \PY{c+c1}{\PYZsh{} Find the index of the maximum combined score}
+    \PY{n}{optimal\PYZus{}clusters\PYZus{}combined} \PY{o}{=} \PY{n}{combined\PYZus{}scores}\PY{o}{.}\PY{n}{index}\PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n}{combined\PYZus{}scores}\PY{p}{)}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{2}  \PY{c+c1}{\PYZsh{} Add 2 because k starts from 2}
+
+    \PY{k}{return} \PY{n}{optimal\PYZus{}clusters\PYZus{}combined}
+
+\PY{n}{score} \PY{o}{=} \PY{n}{combine\PYZus{}scores}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{score}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+8
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{7}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Perform K\PYZhy{}means clustering }
+\PY{k}{def} \PY{n+nf}{k\PYZus{}means}\PY{p}{(}\PY{n}{cluster\PYZus{}num}\PY{p}{)}\PY{p}{:}
+    \PY{n}{kmeans} \PY{o}{=} \PY{n}{KMeans}\PY{p}{(}\PY{n}{n\PYZus{}clusters} \PY{o}{=} \PY{n}{score}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Number of clusters after checking the elbow method plot and silhouette analysis}
+
+    \PY{n}{kmeans}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{)}
+
+    \PY{n}{cluster\PYZus{}labels} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{labels\PYZus{}}
+    \PY{k}{return} \PY{n}{kmeans}
+
+\PY{n}{kmeans} \PY{o}{=} \PY{n}{k\PYZus{}means}\PY{p}{(}\PY{n}{cluster\PYZus{}num}\PY{p}{)}
+\PY{n}{kmeans\PYZus{}labels} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{labels\PYZus{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{8}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{manifold} \PY{k+kn}{import} \PY{n}{TSNE}
+
+\PY{c+c1}{\PYZsh{} Perform t\PYZhy{}SNE dimensionality reduction}
+\PY{n}{tsne2D} \PY{o}{=} \PY{n}{TSNE}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{,} \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{n\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{300}\PY{p}{)}
+\PY{n}{tsne\PYZus{}representation2D} \PY{o}{=} \PY{n}{tsne2D}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Plot the t\PYZhy{}SNE representation with color\PYZhy{}coded clusters}
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{tsne\PYZus{}representation2D}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{tsne\PYZus{}representation2D}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{n}{kmeans\PYZus{}labels}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{viridis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TSNE Visualization of K\PYZhy{}means Clustering}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TSNE Dimension 1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TSNE Dimension 2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{colorbar}\PY{p}{(}\PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cluster}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[t-SNE] Computing 91 nearest neighbors{\ldots}
+[t-SNE] Indexed 2516 samples in 0.001s{\ldots}
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}manifold\textbackslash{}\_t\_sne.py:780:
+FutureWarning: The default initialization in TSNE will change from 'random' to
+'pca' in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}manifold\textbackslash{}\_t\_sne.py:790:
+FutureWarning: The default learning rate in TSNE will change from 200.0 to
+'auto' in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[t-SNE] Computed neighbors for 2516 samples in 0.132s{\ldots}
+[t-SNE] Computed conditional probabilities for sample 1000 / 2516
+[t-SNE] Computed conditional probabilities for sample 2000 / 2516
+[t-SNE] Computed conditional probabilities for sample 2516 / 2516
+[t-SNE] Mean sigma: 0.000000
+[t-SNE] KL divergence after 250 iterations with early exaggeration: 87.406593
+[t-SNE] KL divergence after 300 iterations: 1.879722
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_7_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{9}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{hdbscan}
+
+\PY{k}{def} \PY{n+nf}{hdbscan\PYZus{}score}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{best\PYZus{}score} \PY{o}{=} \PY{o}{\PYZhy{}}\PY{l+m+mi}{10}
+    \PY{n}{best\PYZus{}params} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}cluster\PYZus{}size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{\PYZcb{}}
+
+    \PY{c+c1}{\PYZsh{}perform a grid search for best parameters}
+    \PY{k}{for} \PY{n}{min\PYZus{}cluster\PYZus{}size} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{5}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}\PY{p}{:}
+        \PY{k}{for} \PY{n}{min\PYZus{}samples} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{:}
+            \PY{n}{hdbscan\PYZus{}model} \PY{o}{=} \PY{n}{hdbscan}\PY{o}{.}\PY{n}{HDBSCAN}\PY{p}{(}\PY{n}{min\PYZus{}cluster\PYZus{}size}\PY{o}{=}\PY{n}{min\PYZus{}cluster\PYZus{}size}\PY{p}{,} \PY{n}{min\PYZus{}samples}\PY{o}{=}\PY{n}{min\PYZus{}samples}\PY{p}{)}
+            \PY{n}{cluster\PYZus{}labels\PYZus{}HDB} \PY{o}{=} \PY{n}{hdbscan\PYZus{}model}\PY{o}{.}\PY{n}{fit\PYZus{}predict}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{)}
+            \PY{n}{silhouette} \PY{o}{=} \PY{n}{silhouette\PYZus{}score}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{,} \PY{n}{cluster\PYZus{}labels\PYZus{}HDB}\PY{p}{)}
+
+            \PY{k}{if} \PY{n}{silhouette} \PY{o}{\PYZgt{}} \PY{n}{best\PYZus{}score}\PY{p}{:}
+                \PY{n}{best\PYZus{}score} \PY{o}{=} \PY{n}{silhouette}
+                \PY{n}{best\PYZus{}params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}cluster\PYZus{}size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{min\PYZus{}cluster\PYZus{}size}
+                \PY{n}{best\PYZus{}params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{min\PYZus{}samples}
+                
+    \PY{k}{return} \PY{n}{best\PYZus{}params}
+
+\PY{n}{best\PYZus{}params} \PY{o}{=} \PY{n}{hdbscan\PYZus{}score}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Best Parameters: }\PY{l+s+si}{\PYZob{}}\PY{n}{best\PYZus{}params}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Best Parameters: \{'min\_cluster\_size': 6, 'min\_samples': 1\}
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{10}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{hdb\PYZus{}model}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{hdbscan\PYZus{}model} \PY{o}{=} \PY{n}{hdbscan}\PY{o}{.}\PY{n}{HDBSCAN}\PY{p}{(}\PY{n}{min\PYZus{}cluster\PYZus{}size} \PY{o}{=} \PY{n}{best\PYZus{}params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}cluster\PYZus{}size}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{min\PYZus{}samples} \PY{o}{=} \PY{n}{best\PYZus{}params}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{min\PYZus{}samples}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)} 
+    \PY{n}{cluster\PYZus{}labels\PYZus{}HDB} \PY{o}{=} \PY{n}{hdbscan\PYZus{}model}\PY{o}{.}\PY{n}{fit\PYZus{}predict}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{)}
+    
+    \PY{k}{return} \PY{n}{hdbscan\PYZus{}model}
+
+\PY{n}{hdbscan\PYZus{}model} \PY{o}{=} \PY{n}{hdb\PYZus{}model}\PY{p}{(}\PY{p}{)}
+
+\PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{tsne\PYZus{}representation2D}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{tsne\PYZus{}representation2D}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{n}{hdbscan\PYZus{}model}\PY{o}{.}\PY{n}{labels\PYZus{}}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{viridis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TSNE Visualization of HDBSCAN Clustering}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TSNE Dimension 1}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{TSNE Dimension 2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{colorbar}\PY{p}{(}\PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cluster}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_9_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{11}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+
+\PY{k}{def} \PY{n+nf}{hdbscan\PYZus{}cluster\PYZus{}centers}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Find the persistence diagram}
+    \PY{n}{cluster\PYZus{}persistence} \PY{o}{=} \PY{n}{hdbscan\PYZus{}model}\PY{o}{.}\PY{n}{cluster\PYZus{}persistence\PYZus{}}
+
+    \PY{n}{hdbscan\PYZus{}labels} \PY{o}{=} \PY{n}{hdbscan\PYZus{}model}\PY{o}{.}\PY{n}{labels\PYZus{}}
+
+    \PY{c+c1}{\PYZsh{} Extract representative points for each cluster}
+    \PY{n}{representative\PYZus{}points} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+    \PY{k}{for} \PY{n}{cluster\PYZus{}id}\PY{p}{,} \PY{n}{persistence} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{cluster\PYZus{}persistence}\PY{p}{)}\PY{p}{:}
+            \PY{n}{cluster\PYZus{}indices} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{hdbscan\PYZus{}labels} \PY{o}{==} \PY{n}{cluster\PYZus{}id}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+            \PY{k}{if} \PY{n+nb}{len}\PY{p}{(}\PY{n}{cluster\PYZus{}indices}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{l+m+mi}{0}\PY{p}{:}
+                \PY{c+c1}{\PYZsh{} Take the mean of each feature within the cluster}
+                \PY{n}{cluster\PYZus{}representative} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{cluster\PYZus{}indices}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)} 
+                \PY{n}{representative\PYZus{}points}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{cluster\PYZus{}representative}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Convert the list of representative points to a DataFrame if needed}
+    \PY{n}{representative\PYZus{}points\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{representative\PYZus{}points}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+    \PY{n}{representative\PYZus{}points\PYZus{}df} \PY{o}{=} \PY{n}{representative\PYZus{}points\PYZus{}df}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+    \PY{k}{return} \PY{n}{representative\PYZus{}points\PYZus{}df}
+
+\PY{n}{representative\PYZus{}points\PYZus{}df} \PY{o}{=} \PY{n}{hdbscan\PYZus{}cluster\PYZus{}centers}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{representative\PYZus{}points\PYZus{}df}\PY{o}{.}\PY{n}{values}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[[27.75520833 27.69791667 27.69791667 {\ldots}  6.73252688  8.15188172
+   6.33333333]
+ [31.14423077 31.14423077  2.32211538 {\ldots}  8.65632754  8.41066998
+   9.80272953]
+ [43.37946429 43.18303571 43.03571429 {\ldots}  8.03341014  7.42511521
+   6.74078341]
+ {\ldots}
+ [ 1.          1.          1.         {\ldots}  9.78225806  9.78225806
+   9.74677419]
+ [ 1.          1.          1.         {\ldots}  8.89516129  8.76209677
+   9.8266129 ]
+ [ 1.0237069   1.03556034  1.02963362 {\ldots}  7.91476641  8.06618465
+   8.04324249]]
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{12}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{davies\PYZus{}bouldin\PYZus{}score}
+
+\PY{k}{def} \PY{n+nf}{choose\PYZus{}model}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{choosen\PYZus{}model} \PY{o}{=} \PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}centers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{model\PYZus{}choosen}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k+kc}{None}\PY{p}{\PYZcb{}}
+
+    \PY{n}{hdbscan\PYZus{}labels} \PY{o}{=} \PY{n}{hdbscan\PYZus{}model}\PY{o}{.}\PY{n}{labels\PYZus{}}
+
+    \PY{n}{silhouette\PYZus{}kmeans} \PY{o}{=} \PY{n}{silhouette\PYZus{}score}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{,} \PY{n}{kmeans\PYZus{}labels}\PY{p}{)}
+    \PY{n}{silhouette\PYZus{}hdbscan} \PY{o}{=} \PY{n}{silhouette\PYZus{}score}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{,} \PY{n}{hdbscan\PYZus{}labels}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Lower values indicate better clustering in the Davies–Bouldin Index}
+    \PY{n}{davies\PYZus{}bouldin\PYZus{}kmeans} \PY{o}{=} \PY{n}{davies\PYZus{}bouldin\PYZus{}score}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{,} \PY{n}{kmeans\PYZus{}labels}\PY{p}{)}
+    \PY{n}{davies\PYZus{}bouldin\PYZus{}hdbscan} \PY{o}{=} \PY{n}{davies\PYZus{}bouldin\PYZus{}score}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{]}\PY{p}{,} \PY{n}{hdbscan\PYZus{}labels}\PY{p}{)}
+
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Silhouette Score (KMeans): }\PY{l+s+si}{\PYZob{}}\PY{n}{silhouette\PYZus{}kmeans}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Silhouette Score (HDBSCAN): }\PY{l+s+si}{\PYZob{}}\PY{n}{silhouette\PYZus{}hdbscan}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Davies\PYZhy{}Bouldin Index (KMeans): }\PY{l+s+si}{\PYZob{}}\PY{n}{davies\PYZus{}bouldin\PYZus{}kmeans}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Davies\PYZhy{}Bouldin Index (HDBSCAN): }\PY{l+s+si}{\PYZob{}}\PY{n}{davies\PYZus{}bouldin\PYZus{}hdbscan}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{k}{if} \PY{n}{silhouette\PYZus{}kmeans} \PY{o}{\PYZgt{}} \PY{n}{silhouette\PYZus{}hdbscan} \PY{o+ow}{and} \PY{n}{davies\PYZus{}bouldin\PYZus{}kmeans} \PY{o}{\PYZlt{}} \PY{n}{davies\PYZus{}bouldin\PYZus{}hdbscan}\PY{p}{:} 
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{KMeans chosen as clustering model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{kmeans\PYZus{}labels}
+        \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}centers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{cluster\PYZus{}centers\PYZus{}}
+        \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{model\PYZus{}choosen}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{KMeans}\PY{l+s+s2}{\PYZdq{}}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HDBSCAN chosen as clustering model}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{hdbscan\PYZus{}labels}
+        \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}centers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{representative\PYZus{}points\PYZus{}df}\PY{o}{.}\PY{n}{values}
+        \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{model\PYZus{}choosen}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{HDBSCAN}\PY{l+s+s2}{\PYZdq{}}
+        
+    \PY{k}{return} \PY{n}{choosen\PYZus{}model}
+
+\PY{n}{choosen\PYZus{}model} \PY{o}{=} \PY{n}{choose\PYZus{}model}\PY{p}{(}\PY{p}{)}
+\PY{n}{cluster\PYZus{}labels} \PY{o}{=} \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{cluster\PYZus{}centers} \PY{o}{=} \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}centers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{n}{cluster\PYZus{}labels}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Silhouette Score (KMeans): 0.6716358345563886
+Silhouette Score (HDBSCAN): 0.6256258775187747
+Davies-Bouldin Index (KMeans): 0.9999603105084708
+Davies-Bouldin Index (HDBSCAN): 1.3168832490669065
+KMeans chosen as clustering model
+[4 4 4 {\ldots} 3 3 7]
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{13}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Get the cluster centroids}
+\PY{n}{centroids} \PY{o}{=} \PY{n}{cluster\PYZus{}centers}
+
+\PY{n}{centroid\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{centroids}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Print the centroid values for each cluster}
+\PY{k}{for} \PY{n}{cluster\PYZus{}idx}\PY{p}{,} \PY{n}{centroid} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{centroid\PYZus{}df}\PY{o}{.}\PY{n}{values}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Cluster }\PY{l+s+si}{\PYZob{}}\PY{n}{cluster\PYZus{}idx}\PY{+w}{ }\PY{o}{+}\PY{+w}{ }\PY{l+m+mi}{1}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{ centroid:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{for} \PY{n}{col\PYZus{}idx}\PY{p}{,} \PY{n}{column} \PY{o+ow}{in} \PY{n+nb}{enumerate}\PY{p}{(}\PY{n}{centroid\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{column}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{: }\PY{l+s+si}{\PYZob{}}\PY{n}{centroid}\PY{p}{[}\PY{n}{col\PYZus{}idx}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Cluster 1 centroid:
+('thingy052\_color\_b', 0): 1.6693517080745361
+('thingy052\_color\_b', 10): 1.3330745341614945
+('thingy052\_color\_b', 20): 1.326669254658388
+('thingy052\_color\_b', 30): 1.3021156832298133
+('thingy052\_color\_b', 40): 1.3159937888198785
+('thingy052\_color\_b', 50): 1.6864324534161454
+('thingy052\_color\_c', 0): 1.5590062111801224
+('thingy052\_color\_c', 10): 1.2291925465838478
+('thingy052\_color\_c', 20): 1.1732919254658394
+('thingy052\_color\_c', 30): 1.1397515527950315
+('thingy052\_color\_c', 40): 1.162111801242236
+('thingy052\_color\_c', 50): 1.5869565217391326
+('thingy052\_color\_g', 0): 1.6364285714285733
+('thingy052\_color\_g', 10): 1.2816273291925482
+('thingy052\_color\_g', 20): 1.275478260869562
+('thingy052\_color\_g', 30): 1.2441180124223599
+('thingy052\_color\_g', 40): 1.2539565217391329
+('thingy052\_color\_g', 50): 1.6579503105590074
+('thingy052\_color\_r', 0): 1.7974134263592267
+('thingy052\_color\_r', 10): 1.308857313026465
+('thingy052\_color\_r', 20): 1.2976261380073213
+('thingy052\_color\_r', 30): 1.2681443035820612
+('thingy052\_color\_r', 40): 1.2835871692333871
+('thingy052\_color\_r', 50): 1.8254913639070844
+('thingy052\_eCO2', 0): 9.136907738276722
+('thingy052\_eCO2', 10): 9.09745193522253
+('thingy052\_eCO2', 20): 9.039497181883913
+('thingy052\_eCO2', 30): 9.03863475995923
+('thingy052\_eCO2', 40): 9.07528769175821
+('thingy052\_eCO2', 50): 9.144755777791328
+('thingy052\_sound', 0): 9.988879983971145
+('thingy052\_sound', 10): 10.036816269284712
+('thingy052\_sound', 20): 10.378155680224403
+('thingy052\_sound', 30): 10.359972951312361
+('thingy052\_sound', 40): 10.259967942296132
+('thingy052\_sound', 50): 10.101282308154676
+
+Cluster 2 centroid:
+('thingy052\_color\_b', 0): 32.554976851851855
+('thingy052\_color\_b', 10): 32.51041666666667
+('thingy052\_color\_b', 20): 32.695023148148145
+('thingy052\_color\_b', 30): 33.115162037037045
+('thingy052\_color\_b', 40): 32.95601851851852
+('thingy052\_color\_b', 50): 32.96875
+('thingy052\_color\_c', 0): 36.43333333333334
+('thingy052\_color\_c', 10): 36.599999999999994
+('thingy052\_color\_c', 20): 36.766666666666666
+('thingy052\_color\_c', 30): 37.46666666666666
+('thingy052\_color\_c', 40): 37.26666666666667
+('thingy052\_color\_c', 50): 37.00000000000001
+('thingy052\_color\_g', 0): 34.682
+('thingy052\_color\_g', 10): 34.68566666666667
+('thingy052\_color\_g', 20): 34.858000000000004
+('thingy052\_color\_g', 30): 35.492333333333335
+('thingy052\_color\_g', 40): 35.26866666666667
+('thingy052\_color\_g', 50): 35.276
+('thingy052\_color\_r', 0): 48.599695585996955
+('thingy052\_color\_r', 10): 48.59969558599695
+('thingy052\_color\_r', 20): 48.82572298325722
+('thingy052\_color\_r', 30): 50.0814307458143
+('thingy052\_color\_r', 40): 49.713089802130895
+('thingy052\_color\_r', 50): 49.587519025875174
+('thingy052\_eCO2', 0): 8.566806919121085
+('thingy052\_eCO2', 10): 10.266690042075737
+('thingy052\_eCO2', 20): 9.191374474053296
+('thingy052\_eCO2', 30): 8.707713884992987
+('thingy052\_eCO2', 40): 8.051519401589527
+('thingy052\_eCO2', 50): 7.918583450210379
+('thingy052\_sound', 0): 13.039874551971325
+('thingy052\_sound', 10): 17.736559139784944
+('thingy052\_sound', 20): 11.659946236559138
+('thingy052\_sound', 30): 12.7589605734767
+('thingy052\_sound', 40): 12.004928315412183
+('thingy052\_sound', 50): 11.63037634408602
+
+Cluster 3 centroid:
+('thingy052\_color\_b', 0): 45.059782608695656
+('thingy052\_color\_b', 10): 47.391304347826086
+('thingy052\_color\_b', 20): 47.15217391304347
+('thingy052\_color\_b', 30): 46.3600543478261
+('thingy052\_color\_b', 40): 46.64402173913045
+('thingy052\_color\_b', 50): 42.41440217391303
+('thingy052\_color\_c', 0): 54.45217391304348
+('thingy052\_color\_c', 10): 56.7217391304348
+('thingy052\_color\_c', 20): 56.09565217391304
+('thingy052\_color\_c', 30): 55.23478260869564
+('thingy052\_color\_c', 40): 55.70434782608696
+('thingy052\_color\_c', 50): 51.08695652173912
+('thingy052\_color\_g', 0): 54.305043478260856
+('thingy052\_color\_g', 10): 56.57773913043479
+('thingy052\_color\_g', 20): 56.3022608695652
+('thingy052\_color\_g', 30): 55.56191304347827
+('thingy052\_color\_g', 40): 55.854608695652196
+('thingy052\_color\_g', 50): 51.26617391304348
+('thingy052\_color\_r', 0): 86.08457415128052
+('thingy052\_color\_r', 10): 88.01072066706368
+('thingy052\_color\_r', 20): 87.85348421679569
+('thingy052\_color\_r', 30): 86.83144729005362
+('thingy052\_color\_r', 40): 87.00833829660513
+('thingy052\_color\_r', 50): 81.64264443120906
+('thingy052\_eCO2', 0): 6.159784133178852
+('thingy052\_eCO2', 10): 6.330629916458321
+('thingy052\_eCO2', 20): 6.75140557351058
+('thingy052\_eCO2', 30): 6.35719251173852
+('thingy052\_eCO2', 40): 5.932794682602598
+('thingy052\_eCO2', 50): 5.8609549362766025
+('thingy052\_sound', 0): 11.344319775596071
+('thingy052\_sound', 10): 14.815568022440392
+('thingy052\_sound', 20): 11.101332398316968
+('thingy052\_sound', 30): 12.871669004207572
+('thingy052\_sound', 40): 10.164095371669003
+('thingy052\_sound', 50): 11.749298737727909
+
+Cluster 4 centroid:
+('thingy052\_color\_b', 0): 27.420673076923084
+('thingy052\_color\_b', 10): 27.459134615384624
+('thingy052\_color\_b', 20): 27.064903846153857
+('thingy052\_color\_b', 30): 27.124999999999996
+('thingy052\_color\_b', 40): 27.211538461538456
+('thingy052\_color\_b', 50): 26.56009615384614
+('thingy052\_color\_c', 0): 28.553846153846173
+('thingy052\_color\_c', 10): 28.616783216783215
+('thingy052\_color\_c', 20): 28.151048951048963
+('thingy052\_color\_c', 30): 28.226573426573424
+('thingy052\_color\_c', 40): 28.339860139860143
+('thingy052\_color\_c', 50): 27.62237762237762
+('thingy052\_color\_g', 0): 28.268615384615387
+('thingy052\_color\_g', 10): 28.271384615384612
+('thingy052\_color\_g', 20): 27.872615384615393
+('thingy052\_color\_g', 30): 27.926615384615385
+('thingy052\_color\_g', 40): 28.035999999999994
+('thingy052\_color\_g', 50): 27.378307692307693
+('thingy052\_color\_r', 0): 37.259220231822965
+('thingy052\_color\_r', 10): 37.32876712328766
+('thingy052\_color\_r', 20): 36.788198103266595
+('thingy052\_color\_r', 30): 36.851422550052675
+('thingy052\_color\_r', 40): 36.97154899894626
+('thingy052\_color\_r', 50): 36.178082191780824
+('thingy052\_eCO2', 0): 6.226486136584313
+('thingy052\_eCO2', 10): 5.98830510303161
+('thingy052\_eCO2', 20): 5.936843240910562
+('thingy052\_eCO2', 30): 5.970244902362715
+('thingy052\_eCO2', 40): 5.985295069586795
+('thingy052\_eCO2', 50): 5.74517207897292
+('thingy052\_sound', 0): 10.074441687344912
+('thingy052\_sound', 10): 9.558933002481389
+('thingy052\_sound', 20): 10.085607940446648
+('thingy052\_sound', 30): 10.467121588089329
+('thingy052\_sound', 40): 10.011166253101736
+('thingy052\_sound', 50): 8.944789081885855
+
+Cluster 5 centroid:
+('thingy052\_color\_b', 0): 1.391518091242797
+('thingy052\_color\_b', 10): 1.3707885422129067
+('thingy052\_color\_b', 20): 1.3689859727320317
+('thingy052\_color\_b', 30): 1.3695267435763103
+('thingy052\_color\_b', 40): 1.37241085474568
+('thingy052\_color\_b', 50): 1.3826855007865726
+('thingy052\_color\_c', 0): 1.0783429470372239
+('thingy052\_color\_c', 10): 1.050970110120618
+('thingy052\_color\_c', 20): 1.0500262191924352
+('thingy052\_color\_c', 30): 1.0471945464079861
+('thingy052\_color\_c', 40): 1.0556895647613986
+('thingy052\_color\_c', 50): 1.0679601468274638
+('thingy052\_color\_g', 0): 1.4281866806502337
+('thingy052\_color\_g', 10): 1.4045138961720087
+('thingy052\_color\_g', 20): 1.4032679601468168
+('thingy052\_color\_g', 30): 1.4036832721552237
+('thingy052\_color\_g', 40): 1.407213424226533
+('thingy052\_color\_g', 50): 1.4192574724698557
+('thingy052\_color\_r', 0): 1.4923533341474657
+('thingy052\_color\_r', 10): 1.4577440001149213
+('thingy052\_color\_r', 20): 1.4575069498818483
+('thingy052\_color\_r', 30): 1.4546623470846205
+('thingy052\_color\_r', 40): 1.4648555071079183
+('thingy052\_color\_r', 50): 1.4795526215600807
+('thingy052\_eCO2', 0): 3.7743337272953976
+('thingy052\_eCO2', 10): 3.770525729743011
+('thingy052\_eCO2', 20): 3.7662663060945487
+('thingy052\_eCO2', 30): 3.7675841790524447
+('thingy052\_eCO2', 40): 3.7693826023706833
+('thingy052\_eCO2', 50): 3.770147114307587
+('thingy052\_sound', 0): 6.935221679043255
+('thingy052\_sound', 10): 6.895169748126595
+('thingy052\_sound', 20): 6.894332425529028
+('thingy052\_sound', 30): 6.925452915405044
+('thingy052\_sound', 40): 6.91596325929935
+('thingy052\_sound', 50): 6.890843581372532
+
+Cluster 6 centroid:
+('thingy052\_color\_b', 0): 2.3095238095238093
+('thingy052\_color\_b', 10): 16.87797619047619
+('thingy052\_color\_b', 20): 27.927083333333336
+('thingy052\_color\_b', 30): 28.041666666666664
+('thingy052\_color\_b', 40): 28.058035714285715
+('thingy052\_color\_b', 50): 28.058035714285708
+('thingy052\_color\_c', 0): 1.942857142857143
+('thingy052\_color\_c', 10): 18.314285714285713
+('thingy052\_color\_c', 20): 30.31428571428571
+('thingy052\_color\_c', 30): 30.057142857142857
+('thingy052\_color\_c', 40): 30.228571428571428
+('thingy052\_color\_c', 50): 30.31428571428571
+('thingy052\_color\_g', 0): 2.1502857142857144
+('thingy052\_color\_g', 10): 17.78285714285714
+('thingy052\_color\_g', 20): 29.28571428571429
+('thingy052\_color\_g', 30): 29.276285714285716
+('thingy052\_color\_g', 40): 29.25742857142857
+('thingy052\_color\_g', 50): 29.229142857142854
+('thingy052\_color\_r', 0): 2.24853228962818
+('thingy052\_color\_r', 10): 23.96868884540117
+('thingy052\_color\_r', 20): 39.66144814090019
+('thingy052\_color\_r', 30): 39.53228962818004
+('thingy052\_color\_r', 40): 39.510763209393346
+('thingy052\_color\_r', 50): 39.360078277886494
+('thingy052\_eCO2', 0): 5.9728110599078335
+('thingy052\_eCO2', 10): 6.0276898417150875
+('thingy052\_eCO2', 20): 6.4958124624323785
+('thingy052\_eCO2', 30): 6.779463033460228
+('thingy052\_eCO2', 40): 7.02079743538369
+('thingy052\_eCO2', 50): 6.579783610498898
+('thingy052\_sound', 0): 8.641705069124423
+('thingy052\_sound', 10): 11.873271889400922
+('thingy052\_sound', 20): 17.221198156682025
+('thingy052\_sound', 30): 13.394009216589861
+('thingy052\_sound', 40): 12.063364055299537
+('thingy052\_sound', 50): 11.480414746543778
+
+Cluster 7 centroid:
+('thingy052\_color\_b', 0): 2.396484375
+('thingy052\_color\_b', 10): 2.482421875
+('thingy052\_color\_b', 20): 2.50390625
+('thingy052\_color\_b', 30): 13.955078125
+('thingy052\_color\_b', 40): 31.314453125
+('thingy052\_color\_b', 50): 31.464843749999996
+('thingy052\_color\_c', 0): 1.9000000000000004
+('thingy052\_color\_c', 10): 1.7874999999999996
+('thingy052\_color\_c', 20): 2.0125
+('thingy052\_color\_c', 30): 14.837499999999999
+('thingy052\_color\_c', 40): 34.3
+('thingy052\_color\_c', 50): 34.300000000000004
+('thingy052\_color\_g', 0): 2.1385
+('thingy052\_color\_g', 10): 2.21275
+('thingy052\_color\_g', 20): 2.2498750000000003
+('thingy052\_color\_g', 30): 14.661999999999999
+('thingy052\_color\_g', 40): 34.115500000000004
+('thingy052\_color\_g', 50): 34.152625
+('thingy052\_color\_r', 0): 2.1866438356164384
+('thingy052\_color\_r', 10): 2.1866438356164384
+('thingy052\_color\_r', 20): 2.2996575342465757
+('thingy052\_color\_r', 30): 19.61900684931507
+('thingy052\_color\_r', 40): 47.47688356164383
+('thingy052\_color\_r', 50): 47.47688356164384
+('thingy052\_eCO2', 0): 5.782512272089762
+('thingy052\_eCO2', 10): 5.766891654978962
+('thingy052\_eCO2', 20): 5.840655680224404
+('thingy052\_eCO2', 30): 5.871029102384292
+('thingy052\_eCO2', 40): 6.353532608695652
+('thingy052\_eCO2', 50): 6.618215287517532
+('thingy052\_sound', 0): 8.468245967741934
+('thingy052\_sound', 10): 8.684475806451612
+('thingy052\_sound', 20): 8.501512096774192
+('thingy052\_sound', 30): 8.168850806451612
+('thingy052\_sound', 40): 10.896673387096772
+('thingy052\_sound', 50): 10.78024193548387
+
+Cluster 8 centroid:
+('thingy052\_color\_b', 0): 30.115625
+('thingy052\_color\_b', 10): 30.115625
+('thingy052\_color\_b', 20): 16.113541666666666
+('thingy052\_color\_b', 30): 11.038541666666667
+('thingy052\_color\_b', 40): 2.685416666666667
+('thingy052\_color\_b', 50): 2.639583333333334
+('thingy052\_color\_c', 0): 32.980000000000004
+('thingy052\_color\_c', 10): 32.739999999999995
+('thingy052\_color\_c', 20): 16.96
+('thingy052\_color\_c', 30): 11.586666666666668
+('thingy052\_color\_c', 40): 2.3466666666666667
+('thingy052\_color\_c', 50): 2.286666666666667
+('thingy052\_color\_g', 0): 32.2114
+('thingy052\_color\_g', 10): 32.178399999999996
+('thingy052\_color\_g', 20): 16.8136
+('thingy052\_color\_g', 30): 11.645466666666668
+('thingy052\_color\_g', 40): 2.5638666666666667
+('thingy052\_color\_g', 50): 2.577066666666667
+('thingy052\_color\_r', 0): 44.47260273972602
+('thingy052\_color\_r', 10): 44.47260273972603
+('thingy052\_color\_r', 20): 22.412328767123284
+('thingy052\_color\_r', 30): 15.673515981735159
+('thingy052\_color\_r', 40): 2.9255707762557077
+('thingy052\_color\_r', 50): 2.880365296803653
+('thingy052\_eCO2', 0): 5.856507713884993
+('thingy052\_eCO2', 10): 5.809298737727911
+('thingy052\_eCO2', 20): 5.877798036465638
+('thingy052\_eCO2', 30): 5.782907900888266
+('thingy052\_eCO2', 40): 6.028209443665264
+('thingy052\_eCO2', 50): 6.005993454885461
+('thingy052\_sound', 0): 8.726612903225806
+('thingy052\_sound', 10): 8.566935483870967
+('thingy052\_sound', 20): 8.283064516129032
+('thingy052\_sound', 30): 10.58279569892473
+('thingy052\_sound', 40): 8.613440860215054
+('thingy052\_sound', 50): 8.73763440860215
+
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{14}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{c+c1}{\PYZsh{} Calculate the absolute differences between each centroid and the overall centroid}
+\PY{n}{centroid\PYZus{}diff} \PY{o}{=} \PY{n}{centroids} \PY{o}{\PYZhy{}} \PY{n}{centroids}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Calculate the feature importance as the average absolute difference across clusters}
+\PY{n}{feature\PYZus{}importance} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{absolute}\PY{p}{(}\PY{n}{centroid\PYZus{}diff}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Sort the features by their importance scores}
+\PY{n}{sorted\PYZus{}features} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{feature\PYZus{}importance}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{columns}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Feature Importance:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{k}{for} \PY{n}{feature}\PY{p}{,} \PY{n}{importance} \PY{o+ow}{in} \PY{n}{sorted\PYZus{}features}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{feature}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{: }\PY{l+s+si}{\PYZob{}}\PY{n}{importance}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Feature Importance:
+('thingy052\_color\_r', 0): 26.086393727884392
+('thingy052\_color\_r', 10): 23.686231515239417
+('thingy052\_color\_r', 40): 23.552243885724167
+('thingy052\_color\_r', 20): 23.207716756870084
+('thingy052\_color\_r', 50): 22.86901800168225
+('thingy052\_color\_r', 30): 21.910157591547964
+('thingy052\_color\_c', 0): 18.242393387393562
+('thingy052\_color\_g', 0): 17.764207237063964
+('thingy052\_color\_c', 40): 16.709249938131375
+('thingy052\_color\_c', 10): 16.537071747028477
+('thingy052\_color\_g', 40): 16.29598214806502
+('thingy052\_color\_c', 20): 16.26647942015701
+('thingy052\_color\_c', 50): 16.133216965595032
+('thingy052\_color\_g', 10): 16.128930255533046
+('thingy052\_color\_b', 0): 15.923022444203681
+('thingy052\_color\_g', 20): 15.822046164859813
+('thingy052\_color\_g', 50): 15.738605504343889
+('thingy052\_color\_c', 30): 15.296756599151115
+('thingy052\_color\_g', 30): 14.912734940558554
+('thingy052\_color\_b', 40): 14.740096753883073
+('thingy052\_color\_b', 10): 14.42652743600335
+('thingy052\_color\_b', 50): 14.245464904326699
+('thingy052\_color\_b', 20): 14.190760137077717
+('thingy052\_color\_b', 30): 13.372077604132128
+('thingy052\_sound', 10): 2.8406251352339207
+('thingy052\_sound', 20): 2.1088864368900238
+('thingy052\_sound', 30): 1.73783162783817
+('thingy052\_eCO2', 10): 1.5249428092649935
+('thingy052\_sound', 0): 1.4594662974685042
+('thingy052\_sound', 50): 1.38620333927144
+('thingy052\_eCO2', 20): 1.2862268427767611
+('thingy052\_eCO2', 30): 1.2306932063369849
+('thingy052\_eCO2', 0): 1.208669308078267
+('thingy052\_sound', 40): 1.2020073547575059
+('thingy052\_eCO2', 40): 1.141574356965442
+('thingy052\_eCO2', 50): 1.1098838176969457
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{15}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{pairwise\PYZus{}distances\PYZus{}argmin\PYZus{}min}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{manifold} \PY{k+kn}{import} \PY{n}{TSNE}
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+
+\PY{k}{def} \PY{n+nf}{visualization}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}\PY{p}{:}
+
+    \PY{c+c1}{\PYZsh{} Get indices of cluster center data points}
+    \PY{n}{center\PYZus{}indices}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{pairwise\PYZus{}distances\PYZus{}argmin\PYZus{}min}\PY{p}{(}\PY{n}{cluster\PYZus{}centers}\PY{p}{,} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+
+    \PY{n}{cluster\PYZus{}center\PYZus{}data} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{center\PYZus{}indices}\PY{p}{]}
+
+    \PY{c+c1}{\PYZsh{} Calculate distances from each data point to its assigned cluster center}
+    \PY{n}{distances\PYZus{}to\PYZus{}centers} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{norm}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df} \PY{o}{\PYZhy{}} \PY{n}{cluster\PYZus{}centers}\PY{p}{[}\PY{n}{cluster\PYZus{}labels}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+
+    \PY{n}{outlier\PYZus{}indices} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{distances\PYZus{}to\PYZus{}centers} \PY{o}{\PYZgt{}} \PY{n}{outlier\PYZus{}threshold}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+
+    \PY{c+c1}{\PYZsh{} Filter the DataFrame to include only outlier data points}
+    \PY{n}{outlier\PYZus{}data} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{outlier\PYZus{}indices}\PY{p}{]}
+
+    \PY{n}{tsne} \PY{o}{=} \PY{n}{TSNE}\PY{p}{(}\PY{n}{n\PYZus{}components}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{verbose}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{perplexity}\PY{o}{=}\PY{l+m+mi}{40}\PY{p}{,} \PY{n}{n\PYZus{}iter}\PY{o}{=}\PY{l+m+mi}{300}\PY{p}{)}
+    \PY{n}{tsne\PYZus{}representation} \PY{o}{=} \PY{n}{tsne}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+
+    \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{tsne\PYZus{}representation}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{tsne\PYZus{}representation}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{n}{cluster\PYZus{}labels}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{viridis}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{s}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Data Points}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{tsne\PYZus{}representation}\PY{p}{[}\PY{n}{outlier\PYZus{}indices}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{tsne\PYZus{}representation}\PY{p}{[}\PY{n}{outlier\PYZus{}indices}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{s}\PY{o}{=}\PY{l+m+mi}{20}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Outliers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{tsne\PYZus{}representation}\PY{p}{[}\PY{n}{center\PYZus{}indices}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{tsne\PYZus{}representation}\PY{p}{[}\PY{n}{center\PYZus{}indices}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{c}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{black}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{s}\PY{o}{=}\PY{l+m+mi}{50}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cluster Centers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{t\PYZhy{}SNE Visualization with Outliers and Cluster Centers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+
+    \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+    \PY{k}{return} \PY{n}{outlier\PYZus{}indices}
+
+\PY{n}{outlier\PYZus{}indices} \PY{o}{=} \PY{n}{visualization}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+\PY{n}{outlier\PYZus{}data} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{outlier\PYZus{}indices}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[t-SNE] Computing 121 nearest neighbors{\ldots}
+[t-SNE] Indexed 2516 samples in 0.001s{\ldots}
+[t-SNE] Computed neighbors for 2516 samples in 0.110s{\ldots}
+[t-SNE] Computed conditional probabilities for sample 1000 / 2516
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}manifold\textbackslash{}\_t\_sne.py:780:
+FutureWarning: The default initialization in TSNE will change from 'random' to
+'pca' in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}manifold\textbackslash{}\_t\_sne.py:790:
+FutureWarning: The default learning rate in TSNE will change from 200.0 to
+'auto' in 1.2.
+  warnings.warn(
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning: Feature names only support names that are all strings. Got
+feature names with dtypes: ['tuple']. An error will be raised in 1.2.
+  warnings.warn(
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+
+[t-SNE] Computed conditional probabilities for sample 2000 / 2516
+[t-SNE] Computed conditional probabilities for sample 2516 / 2516
+[t-SNE] Mean sigma: 0.000000
+[t-SNE] KL divergence after 250 iterations with early exaggeration: 82.061913
+[t-SNE] KL divergence after 300 iterations: 1.653558
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_14_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{16}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{plotly}\PY{n+nn}{.}\PY{n+nn}{express} \PY{k}{as} \PY{n+nn}{px}
+
+\PY{n}{tsne\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{tsne\PYZus{}representation2D}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{n}{tsne\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cluster}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{cluster\PYZus{}labels}
+
+\PY{c+c1}{\PYZsh{} Create a scatter plot with hover information using Plotly Express}
+\PY{n}{fig} \PY{o}{=} \PY{n}{px}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}\PY{n}{tsne\PYZus{}df}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cluster}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{hover\PYZus{}data}\PY{o}{=}\PY{p}{[}\PY{n}{cluster\PYZus{}labels}\PY{p}{]}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Add outliers to the plot with custom markers}
+\PY{n}{fig}\PY{o}{.}\PY{n}{add\PYZus{}trace}\PY{p}{(}
+    \PY{n}{px}\PY{o}{.}\PY{n}{scatter}\PY{p}{(}
+        \PY{n}{tsne\PYZus{}df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{outlier\PYZus{}indices}\PY{p}{]}\PY{p}{,}
+        \PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+        \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+        \PY{n}{color\PYZus{}discrete\PYZus{}sequence}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+        \PY{n}{hover\PYZus{}data}\PY{o}{=}\PY{p}{[}\PY{n}{outlier\PYZus{}indices}\PY{p}{]}
+    \PY{p}{)}\PY{o}{.}\PY{n}{data}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}
+\PY{p}{)}
+
+\PY{n}{fig}\PY{o}{.}\PY{n}{update\PYZus{}layout}\PY{p}{(}
+    \PY{n}{title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{t\PYZhy{}SNE Visualization with Outliers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{xaxis\PYZus{}title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{yaxis\PYZus{}title}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Dimension 2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+    \PY{n}{showlegend}\PY{o}{=}\PY{k+kc}{True}
+\PY{p}{)}
+
+\PY{n}{fig}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    
+    
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{17}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{outlier\PYZus{}timestamps} \PY{o}{=} \PY{n}{outlier\PYZus{}data}\PY{o}{.}\PY{n}{index}
+
+\PY{n}{window\PYZus{}size} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Timedelta}\PY{p}{(}\PY{n}{hours}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}  \PY{c+c1}{\PYZsh{} this can be adjustto a larger time window}
+
+\PY{c+c1}{\PYZsh{} Initialize a list to store data for plotting}
+\PY{n}{plot\PYZus{}data} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+\PY{k}{for} \PY{n}{timestamp} \PY{o+ow}{in} \PY{n}{outlier\PYZus{}timestamps}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Extract the data within the defined time window}
+    \PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{timestamp} \PY{o}{\PYZhy{}} \PY{n}{window\PYZus{}size}
+    \PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{timestamp} \PY{o}{+} \PY{n}{window\PYZus{}size}
+    \PY{n}{data\PYZus{}within\PYZus{}window} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{start\PYZus{}time}\PY{p}{)} \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{end\PYZus{}time}\PY{p}{)}\PY{p}{]}
+
+    \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}eCO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}sound}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Noise}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}g}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Color\PYZhy{}g}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Color\PYZhy{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}c}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Color\PYZhy{}c}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}b}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Color\PYZhy{}b}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{axvline}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{timestamp}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{linestyle}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{}\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Outlier Timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensor Trend of Outlier at }\PY{l+s+si}{\PYZob{}}\PY{n}{timestamp}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensor Values}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{grid}\PY{p}{(}\PY{k+kc}{True}\PY{p}{)}
+
+    \PY{n}{plot\PYZus{}data}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{timestamp}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Outlier}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Plot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{plt}\PY{p}{\PYZcb{}}\PY{p}{)}
+
+\PY{k}{for} \PY{n}{data} \PY{o+ow}{in} \PY{n}{plot\PYZus{}data}\PY{p}{:}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Plot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}AppData\textbackslash{}Local\textbackslash{}Temp\textbackslash{}ipykernel\_25508\textbackslash{}1452614872.py:14:
+RuntimeWarning:
+
+More than 20 figures have been opened. Figures created through the pyplot
+interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and
+may consume too much memory. (To control this warning, see the rcParam
+`figure.max\_open\_warning`). Consider using `matplotlib.pyplot.close()`.
+
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_4.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_5.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_6.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_7.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_8.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_9.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_10.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_11.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_12.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_13.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_14.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_15.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_16.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_17.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_18.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_19.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_20.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_21.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_22.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_23.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_24.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_25.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_26.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_27.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_28.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_29.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_30.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_31.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_32.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_33.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_34.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_35.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_36.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_37.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_38.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_39.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_40.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_41.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_42.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_43.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_44.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_45.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_46.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_47.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_48.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_49.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_50.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_51.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_52.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_53.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_54.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_55.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_56.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_57.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_58.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_59.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_60.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_61.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_62.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_63.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_64.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_65.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_66.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_67.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_68.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_69.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_70.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_71.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_72.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_73.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_74.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_75.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_76.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_77.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_78.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_79.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_80.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_81.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_82.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_83.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_84.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_85.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_86.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_87.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{18}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics}\PY{n+nn}{.}\PY{n+nn}{pairwise} \PY{k+kn}{import} \PY{n}{pairwise\PYZus{}distances\PYZus{}argmin\PYZus{}min}
+\PY{k+kn}{from} \PY{n+nn}{collections} \PY{k+kn}{import} \PY{n}{Counter}
+
+\PY{c+c1}{\PYZsh{} count the points in each cluster}
+\PY{n}{cluster\PYZus{}counts} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{n}{Counter}\PY{p}{(}\PY{n}{cluster\PYZus{}labels}\PY{p}{)}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{} Get indices of cluster center data points}
+\PY{n}{center\PYZus{}indices}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{pairwise\PYZus{}distances\PYZus{}argmin\PYZus{}min}\PY{p}{(}\PY{n}{cluster\PYZus{}centers}\PY{p}{,} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+
+\PY{n}{cluster\PYZus{}center\PYZus{}data} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{center\PYZus{}indices}\PY{p}{]}
+\PY{c+c1}{\PYZsh{} Extract timestamps of centers}
+\PY{n}{center\PYZus{}timestamps} \PY{o}{=} \PY{n}{cluster\PYZus{}center\PYZus{}data}\PY{o}{.}\PY{n}{index}
+
+\PY{n}{window\PYZus{}size} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Timedelta}\PY{p}{(}\PY{n}{hours}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}  \PY{c+c1}{\PYZsh{} this can be adjusted to a larger time window}
+
+\PY{n}{plot\PYZus{}data} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+
+\PY{k}{for} \PY{n}{timestamp} \PY{o+ow}{in} \PY{n}{center\PYZus{}timestamps}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Extract the data within the defined time window}
+    \PY{n}{start\PYZus{}time} \PY{o}{=} \PY{n}{timestamp} \PY{o}{\PYZhy{}} \PY{n}{window\PYZus{}size}
+    \PY{n}{end\PYZus{}time} \PY{o}{=} \PY{n}{timestamp} \PY{o}{+} \PY{n}{window\PYZus{}size}
+    \PY{n}{data\PYZus{}within\PYZus{}window} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{n}{start\PYZus{}time}\PY{p}{)} \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{n}{end\PYZus{}time}\PY{p}{)}\PY{p}{]}
+    
+    \PY{n}{cluster\PYZus{}number} \PY{o}{=} \PY{n}{cluster\PYZus{}labels}\PY{p}{[}\PY{n}{center\PYZus{}indices}\PY{p}{[}\PY{n}{center\PYZus{}timestamps} \PY{o}{==} \PY{n}{timestamp}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
+
+    \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}eCO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}sound}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Noise}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}g}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Color\PYZhy{}g}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Color\PYZhy{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}c}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Color\PYZhy{}c}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{n}{data\PYZus{}within\PYZus{}window}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{data\PYZus{}within\PYZus{}window}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}b}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Color\PYZhy{}b}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{marker}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{o}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{axvline}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{n}{timestamp}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{red}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{linestyle}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZhy{}\PYZhy{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Center Timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensor Trend of Cluster Center at }\PY{l+s+si}{\PYZob{}}\PY{n}{timestamp}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Sensor Values}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{grid}\PY{p}{(}\PY{k+kc}{True}\PY{p}{)}
+
+    \PY{n}{plot\PYZus{}data}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Timestamp}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{timestamp}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Outlier}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Plot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{plt}\PY{p}{\PYZcb{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cluster }\PY{l+s+si}{\PYZob{}}\PY{n}{cluster\PYZus{}number}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{: }\PY{l+s+si}{\PYZob{}}\PY{n}{cluster\PYZus{}counts}\PY{p}{[}\PY{n}{cluster\PYZus{}number}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{ data points}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+
+\PY{k}{for} \PY{n}{data} \PY{o+ow}{in} \PY{n}{plot\PYZus{}data}\PY{p}{:}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Plot}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Cluster 0: 322 data points
+Cluster 1: 54 data points
+Cluster 2: 23 data points
+Cluster 3: 143 data points
+Cluster 4: 1907 data points
+Cluster 5: 21 data points
+Cluster 6: 16 data points
+Cluster 7: 30 data points
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_2.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_3.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_4.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_5.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_6.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_7.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_17_8.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{19}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{collections} \PY{k+kn}{import} \PY{n}{Counter}
+
+\PY{n}{cluster\PYZus{}counts} \PY{o}{=} \PY{n+nb}{dict}\PY{p}{(}\PY{n}{Counter}\PY{p}{(}\PY{n}{cluster\PYZus{}labels}\PY{p}{)}\PY{p}{)}
+
+\PY{k}{for} \PY{n}{cluster}\PY{p}{,} \PY{n}{count} \PY{o+ow}{in} \PY{n}{cluster\PYZus{}counts}\PY{o}{.}\PY{n}{items}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cluster }\PY{l+s+si}{\PYZob{}}\PY{n}{cluster}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{: }\PY{l+s+si}{\PYZob{}}\PY{n}{count}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{ data points}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Cluster 4: 1907 data points
+Cluster 6: 16 data points
+Cluster 7: 30 data points
+Cluster 3: 143 data points
+Cluster 0: 322 data points
+Cluster 5: 21 data points
+Cluster 1: 54 data points
+Cluster 2: 23 data points
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{20}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{anomalie\PYZus{}num}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}\PY{p}{:}
+    \PY{c+c1}{\PYZsh{} Create a list of the corresponding index labels in the Dataframe}
+    \PY{n}{index\PYZus{}labels} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{index}\PY{p}{[}\PY{n}{outlier\PYZus{}indices}\PY{p}{]}
+
+    \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Normal}\PY{l+s+s1}{\PYZsq{}}
+    \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{index\PYZus{}labels}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Anomaly}\PY{l+s+s1}{\PYZsq{}}
+
+    \PY{n}{anomaly\PYZus{}count} \PY{o}{=} \PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Anomaly}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Number of anomalies: }\PY{l+s+si}{\PYZob{}}\PY{n}{anomaly\PYZus{}count}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Analyze periods of low activity during night or day}
+\PY{n}{night\PYZus{}hours} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{hour} \PY{o}{\PYZlt{}} \PY{l+m+mi}{7}  \PY{c+c1}{\PYZsh{} Assuming night hours are before 7 AM}
+\PY{n}{day\PYZus{}hours} \PY{o}{=} \PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{hour} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{7}\PY{p}{)} \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{hour} \PY{o}{\PYZlt{}} \PY{l+m+mi}{19}\PY{p}{)}  \PY{c+c1}{\PYZsh{} Assuming day hours are between 7 AM and 7 PM}
+
+\PY{n}{night\PYZus{}data} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{n}{night\PYZus{}hours}\PY{p}{]}
+\PY{n}{day\PYZus{}data} \PY{o}{=} \PY{n}{combined\PYZus{}dataset}\PY{p}{[}\PY{n}{day\PYZus{}hours}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{add\PYZus{}features}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}\PY{p}{:}
+    \PY{n}{light\PYZus{}sensor\PYZus{}columns} \PY{o}{=} \PY{p}{[}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+si}{\PYZob{}}\PY{n}{room}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}g}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+si}{\PYZob{}}\PY{n}{room}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}b}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+si}{\PYZob{}}\PY{n}{room}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}c}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+si}{\PYZob{}}\PY{n}{room}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZus{}color\PYZus{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+    \PY{n}{light\PYZus{}sensor\PYZus{}changes} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{n}{light\PYZus{}sensor\PYZus{}columns}\PY{p}{]}\PY{o}{.}\PY{n}{diff}\PY{p}{(}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Check if these new columns are actually able to detect anomalies}
+    \PY{n}{light\PYZus{}sensor\PYZus{}threshold} \PY{o}{=} \PY{l+m+mi}{1} 
+    \PY{n}{noise\PYZus{}sensor\PYZus{}threshold} \PY{o}{=} \PY{l+m+mi}{10}
+    \PY{n}{CO2\PYZus{}threshold} \PY{o}{=} \PY{l+m+mi}{18}
+    \PY{n}{mean\PYZus{}threshold} \PY{o}{=} \PY{l+m+mi}{10}
+
+    \PY{k}{def} \PY{n+nf}{office}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Calculate the mean change rate}
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{light\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{light\PYZus{}sensor\PYZus{}changes}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sound\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}sound}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{diff}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} Now, new\PYZus{}features\PYZus{}df contains a \PYZsq{}light\PYZus{}change\PYZus{}mean\PYZsq{} column with the mean change rate for all light and sound sensors}
+        
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nighttime}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{hour} \PY{o}{\PYZlt{}} \PY{l+m+mi}{7}\PY{p}{)}
+
+        \PY{n}{matched\PYZus{}anomalies} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}
+            \PY{p}{(}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{light\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{light\PYZus{}sensor\PYZus{}threshold}\PY{p}{)} \PY{o}{|} 
+             \PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sound\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{noise\PYZus{}sensor\PYZus{}threshold}\PY{p}{)}\PY{p}{)}
+        \PY{p}{]}
+        
+        \PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{light\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{matched\PYZus{}anomalies}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sound\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{noise\PYZus{}sensor\PYZus{}threshold}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sound\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}
+                
+        \PY{k}{return} \PY{n}{matched\PYZus{}anomalies}
+
+    \PY{k}{def} \PY{n+nf}{open\PYZus{}space}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{light\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{light\PYZus{}sensor\PYZus{}changes}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sound\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}sound}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{diff}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+
+        \PY{c+c1}{\PYZsh{} A large number of anomalies for this type of room are because of high levels of CO2}
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{high\PYZus{}CO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{thingy}\PY{l+s+s1}{\PYZsq{}} \PY{o}{+} \PY{n}{room} \PY{o}{+} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZus{}eCO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)} \PY{o}{\PYZgt{}} \PY{n}{CO2\PYZus{}threshold}
+        
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nighttime}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{hour} \PY{o}{\PYZlt{}} \PY{l+m+mi}{7}\PY{p}{)}
+
+        \PY{n}{matched\PYZus{}anomalies} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}
+            \PY{p}{(}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{light\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{light\PYZus{}sensor\PYZus{}threshold}\PY{p}{)} \PY{o}{|} 
+             \PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sound\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{noise\PYZus{}sensor\PYZus{}threshold}\PY{p}{)} \PY{o}{|}
+             \PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{high\PYZus{}CO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{k+kc}{True}\PY{p}{)}\PY{p}{)}
+        \PY{p}{]}
+        
+        \PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{light\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{matched\PYZus{}anomalies}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sound\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{noise\PYZus{}sensor\PYZus{}threshold}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sound\PYZus{}change\PYZus{}mean}\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{matched\PYZus{}anomalies}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{high\PYZus{}CO2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{k+kc}{True}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{high\PYZus{}CO2}\PY{l+s+s1}{\PYZsq{}}
+
+            
+        \PY{k}{return} \PY{n}{matched\PYZus{}anomalies}
+
+    \PY{k}{def} \PY{n+nf}{lab}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+        \PY{c+c1}{\PYZsh{} Most anomalies in this type of room are because of meetings so all values seem to change at the same time}
+        \PY{c+c1}{\PYZsh{} Also for this room there seem to be less anomalies for light and sound peaks so I dont add them to the dataset}
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mean\PYZus{}across\PYZus{}columns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+        
+        \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nighttime}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{index}\PY{o}{.}\PY{n}{hour} \PY{o}{\PYZlt{}} \PY{l+m+mi}{7}\PY{p}{)}
+
+        \PY{n}{matched\PYZus{}anomalies} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{loc}\PY{p}{[}
+            \PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mean\PYZus{}across\PYZus{}columns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{mean\PYZus{}threshold}\PY{p}{)}
+        \PY{p}{]}
+        
+        \PY{n}{matched\PYZus{}anomalies}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mean\PYZus{}across\PYZus{}columns}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{\PYZgt{}} \PY{n}{mean\PYZus{}threshold}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mean\PYZus{}across\PYZus{}columns}\PY{l+s+s1}{\PYZsq{}}
+        
+                
+        \PY{k}{return} \PY{n}{matched\PYZus{}anomalies}
+
+
+    \PY{k}{if} \PY{n}{room\PYZus{}type} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{office}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+        \PY{n}{matched\PYZus{}anomalies} \PY{o}{=} \PY{n}{office}\PY{p}{(}\PY{p}{)}
+
+    \PY{k}{if} \PY{n}{room\PYZus{}type} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{open\PYZus{}space}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+        \PY{n}{matched\PYZus{}anomalies} \PY{o}{=} \PY{n}{open\PYZus{}space}\PY{p}{(}\PY{p}{)}
+
+    \PY{k}{if} \PY{n}{room\PYZus{}type} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{lab}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:}
+        \PY{n}{matched\PYZus{}anomalies} \PY{o}{=} \PY{n}{lab}\PY{p}{(}\PY{p}{)}
+
+    \PY{n}{anomaly\PYZus{}count} \PY{o}{=} \PY{p}{(}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Anomaly}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+    \PY{n}{non\PYZus{}anomaly\PYZus{}count} \PY{o}{=} \PY{p}{(}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{!=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Anomaly}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Number of anomalies found after adding new features to the dataframe:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Anomalies: }\PY{l+s+si}{\PYZob{}}\PY{n}{anomaly\PYZus{}count}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Non\PYZhy{}Anomalies: }\PY{l+s+si}{\PYZob{}}\PY{n}{non\PYZus{}anomaly\PYZus{}count}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Further details about the anomalies found after adding new features}
+    \PY{k}{if} \PY{o+ow}{not} \PY{n}{matched\PYZus{}anomalies}\PY{o}{.}\PY{n}{empty}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Details of Anomalies:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{matched\PYZus{}anomalies}\PY{o}{.}\PY{n}{describe}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Anomalies Detected by Feature:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{value\PYZus{}counts}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Correctly Classified Anomalies by Feature:}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        \PY{k}{for} \PY{n}{feature} \PY{o+ow}{in} \PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{unique}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+            \PY{n}{correctly\PYZus{}classified} \PY{o}{=} \PY{n}{matched\PYZus{}anomalies}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{p}{(}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{anomaly\PYZus{}source}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{n}{feature}\PY{p}{)} \PY{o}{\PYZam{}} \PY{p}{(}\PY{n}{matched\PYZus{}anomalies}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Anomaly}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{]}
+            \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{feature}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{: }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{len}\PY{p}{(}\PY{n}{correctly\PYZus{}classified}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{model\PYZus{}selection} \PY{k+kn}{import} \PY{n}{train\PYZus{}test\PYZus{}split}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{ensemble} \PY{k+kn}{import} \PY{n}{RandomForestClassifier}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k+kn}{import} \PY{n}{accuracy\PYZus{}score}\PY{p}{,} \PY{n}{confusion\PYZus{}matrix}\PY{p}{,} \PY{n}{classification\PYZus{}report}
+\PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{impute} \PY{k+kn}{import} \PY{n}{SimpleImputer}
+\PY{k+kn}{from} \PY{n+nn}{tabulate} \PY{k+kn}{import} \PY{n}{tabulate}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+
+\PY{k}{def} \PY{n+nf}{supervised}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}\PY{p}{:}
+    \PY{n}{X} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+    \PY{n}{y} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+
+    \PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{X\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}test} \PY{o}{=} \PY{n}{train\PYZus{}test\PYZus{}split}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{test\PYZus{}size}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{,} \PY{n}{random\PYZus{}state}\PY{o}{=}\PY{l+m+mi}{42}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} This is to remove NaN, infinity or a value too large for dtype(\PYZsq{}float64\PYZsq{})}
+    \PY{n}{imputer} \PY{o}{=} \PY{n}{SimpleImputer}\PY{p}{(}\PY{n}{strategy}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{mean}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{X\PYZus{}train} \PY{o}{=} \PY{n}{imputer}\PY{o}{.}\PY{n}{fit\PYZus{}transform}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{)}
+    \PY{n}{X\PYZus{}test} \PY{o}{=} \PY{n}{imputer}\PY{o}{.}\PY{n}{transform}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Create and train the model}
+    \PY{n}{model} \PY{o}{=} \PY{n}{RandomForestClassifier}\PY{p}{(}\PY{p}{)}
+    \PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{X\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
+
+    \PY{n}{y\PYZus{}pred} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{X\PYZus{}test}\PY{p}{)}
+
+    \PY{n}{accuracy} \PY{o}{=} \PY{n}{accuracy\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{p}{)}
+    \PY{n}{confusion} \PY{o}{=} \PY{n}{confusion\PYZus{}matrix}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{p}{)}
+    \PY{n}{report} \PY{o}{=} \PY{n}{classification\PYZus{}report}\PY{p}{(}\PY{n}{y\PYZus{}test}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Accuracy: }\PY{l+s+si}{\PYZob{}}\PY{n}{accuracy}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Confusion Matrix:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{confusion}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Classification Report:}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+si}{\PYZob{}}\PY{n}{report}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    
+    \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{8}\PY{p}{,} \PY{l+m+mi}{6}\PY{p}{)}\PY{p}{)}
+    \PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{confusion}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Blues}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{fmt}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{g}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{cbar}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{annot\PYZus{}kws}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{size}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+m+mi}{12}\PY{p}{\PYZcb{}}\PY{p}{,}
+                \PY{n}{xticklabels}\PY{o}{=}\PY{n}{model}\PY{o}{.}\PY{n}{classes\PYZus{}}\PY{p}{,} \PY{n}{yticklabels}\PY{o}{=}\PY{n}{model}\PY{o}{.}\PY{n}{classes\PYZus{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Predicted labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{True labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{title}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Confusion Matrix}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+    \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+    \PY{k}{return} \PY{n}{model}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{feature\PYZus{}importance}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)} \PY{p}{:}
+    \PY{n}{feature\PYZus{}importances} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{feature\PYZus{}importances\PYZus{}}
+    \PY{n}{features} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{drop}\PY{p}{(}\PY{n}{columns}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Create a sorted list of (feature name, importance) tuples}
+    \PY{n}{sorted\PYZus{}feature\PYZus{}importance} \PY{o}{=} \PY{n+nb}{sorted}\PY{p}{(}\PY{n+nb}{zip}\PY{p}{(}\PY{n}{features}\PY{p}{,} \PY{n}{feature\PYZus{}importances}\PY{p}{)}\PY{p}{,} \PY{n}{key}\PY{o}{=}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{n}{x}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{reverse}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+
+    \PY{c+c1}{\PYZsh{} Print the feature importances}
+    \PY{k}{for} \PY{n}{feature}\PY{p}{,} \PY{n}{importance} \PY{o+ow}{in} \PY{n}{sorted\PYZus{}feature\PYZus{}importance}\PY{p}{:}
+        \PY{n+nb}{print}\PY{p}{(}\PY{l+s+sa}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{feature}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{: Importance = }\PY{l+s+si}{\PYZob{}}\PY{n}{importance}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}from sklearn.svm import SVC}
+
+\PY{l+s+sd}{X = new\PYZus{}features\PYZus{}df.drop(columns=[\PYZsq{}label\PYZsq{}])}
+\PY{l+s+sd}{y = new\PYZus{}features\PYZus{}df[\PYZsq{}label\PYZsq{}]}
+
+\PY{l+s+sd}{X\PYZus{}train, X\PYZus{}test, y\PYZus{}train, y\PYZus{}test = train\PYZus{}test\PYZus{}split(X, y, test\PYZus{}size=0.2, random\PYZus{}state=42)}
+
+\PY{l+s+sd}{\PYZsh{} This is to remove NaN, infinity or a value too large for dtype(\PYZsq{}float64\PYZsq{})}
+\PY{l+s+sd}{imputer = SimpleImputer(strategy=\PYZsq{}mean\PYZsq{})}
+\PY{l+s+sd}{X\PYZus{}train = imputer.fit\PYZus{}transform(X\PYZus{}train)}
+\PY{l+s+sd}{X\PYZus{}test = imputer.transform(X\PYZus{}test)}
+
+\PY{l+s+sd}{\PYZsh{} Create and train the SVM model}
+\PY{l+s+sd}{svm\PYZus{}model = SVC()}
+\PY{l+s+sd}{svm\PYZus{}model.fit(X\PYZus{}train, y\PYZus{}train)}
+
+\PY{l+s+sd}{\PYZsh{} Make predictions}
+\PY{l+s+sd}{y\PYZus{}pred = svm\PYZus{}model.predict(X\PYZus{}test)}
+
+\PY{l+s+sd}{\PYZsh{} Evaluate the model}
+\PY{l+s+sd}{accuracy = accuracy\PYZus{}score(y\PYZus{}test, y\PYZus{}pred)}
+\PY{l+s+sd}{conf\PYZus{}matrix = confusion\PYZus{}matrix(y\PYZus{}test, y\PYZus{}pred)}
+\PY{l+s+sd}{class\PYZus{}report = classification\PYZus{}report(y\PYZus{}test, y\PYZus{}pred)}
+
+\PY{l+s+sd}{print(f\PYZsq{}Accuracy: \PYZob{}accuracy\PYZcb{}\PYZsq{})}
+\PY{l+s+sd}{print(\PYZsq{}Confusion Matrix:\PYZsq{})}
+\PY{l+s+sd}{print(conf\PYZus{}matrix)}
+\PY{l+s+sd}{print(\PYZsq{}Classification Report:\PYZsq{})}
+\PY{l+s+sd}{print(class\PYZus{}report)}
+\PY{l+s+sd}{\PYZsq{}\PYZsq{}\PYZsq{}}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+"from sklearn.svm import SVC\textbackslash{}n\textbackslash{}nX = new\_features\_df.drop(columns=['label'])\textbackslash{}ny =
+new\_features\_df['label']\textbackslash{}n\textbackslash{}nX\_train, X\_test, y\_train, y\_test =
+train\_test\_split(X, y, test\_size=0.2, random\_state=42)\textbackslash{}n\textbackslash{}n\# This is to remove
+NaN, infinity or a value too large for dtype('float64')\textbackslash{}nimputer =
+SimpleImputer(strategy='mean')\textbackslash{}nX\_train = imputer.fit\_transform(X\_train)\textbackslash{}nX\_test
+= imputer.transform(X\_test)\textbackslash{}n\textbackslash{}n\# Create and train the SVM model\textbackslash{}nsvm\_model =
+SVC()\textbackslash{}nsvm\_model.fit(X\_train, y\_train)\textbackslash{}n\textbackslash{}n\# Make predictions\textbackslash{}ny\_pred =
+svm\_model.predict(X\_test)\textbackslash{}n\textbackslash{}n\# Evaluate the model\textbackslash{}naccuracy =
+accuracy\_score(y\_test, y\_pred)\textbackslash{}nconf\_matrix = confusion\_matrix(y\_test,
+y\_pred)\textbackslash{}nclass\_report = classification\_report(y\_test,
+y\_pred)\textbackslash{}n\textbackslash{}nprint(f'Accuracy: \{accuracy\}')\textbackslash{}nprint('Confusion
+Matrix:')\textbackslash{}nprint(conf\_matrix)\textbackslash{}nprint('Classification
+Report:')\textbackslash{}nprint(class\_report)\textbackslash{}n"
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{room} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{006}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{room\PYZus{}type} \PY{o}{=} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{office}\PY{l+s+s2}{\PYZdq{}}
+\PY{n}{outlier\PYZus{}threshold} \PY{o}{=} \PY{l+m+mf}{60.0} \PY{c+c1}{\PYZsh{}The samaller the distance the more anomalies found}
+
+\PY{n}{datasets} \PY{o}{=} \PY{n}{load\PYZus{}datasets}\PY{p}{(}\PY{n}{room}\PY{p}{)}
+
+\PY{n}{combined\PYZus{}dataset} \PY{o}{=} \PY{n}{preprocess\PYZus{}data}\PY{p}{(}\PY{n}{datasets}\PY{p}{,} \PY{n}{room}\PY{p}{)}
+
+\PY{n}{new\PYZus{}features\PYZus{}df} \PY{o}{=} \PY{n}{pivot\PYZus{}and\PYZus{}resample}\PY{p}{(}\PY{n}{combined\PYZus{}dataset}\PY{p}{)}
+
+\PY{n}{optimal\PYZus{}clusters} \PY{o}{=} \PY{n}{silhouete\PYZus{}number}\PY{p}{(}\PY{p}{)}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{optimal number of clusters based on silhouette\PYZus{}score =}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{optimal\PYZus{}clusters}\PY{p}{)}
+
+\PY{n}{kmeans} \PY{o}{=} \PY{n}{k\PYZus{}means}\PY{p}{(}\PY{n}{optimal\PYZus{}clusters}\PY{p}{)} \PY{c+c1}{\PYZsh{}Change if silhoutte score does not match the expected output}
+\PY{n}{kmeans\PYZus{}labels} \PY{o}{=} \PY{n}{kmeans}\PY{o}{.}\PY{n}{labels\PYZus{}}
+
+\PY{c+c1}{\PYZsh{} Creating hdbscan model}
+\PY{n}{best\PYZus{}params} \PY{o}{=} \PY{n}{hdbscan\PYZus{}score}\PY{p}{(}\PY{p}{)}
+\PY{n}{hdbscan\PYZus{}model} \PY{o}{=} \PY{n}{hdb\PYZus{}model}\PY{p}{(}\PY{p}{)}
+\PY{n}{representative\PYZus{}points\PYZus{}df} \PY{o}{=} \PY{n}{hdbscan\PYZus{}cluster\PYZus{}centers}\PY{p}{(}\PY{p}{)}
+
+\PY{c+c1}{\PYZsh{}choose model}
+\PY{n}{choosen\PYZus{}model} \PY{o}{=} \PY{n}{choose\PYZus{}model}\PY{p}{(}\PY{p}{)}
+\PY{n}{cluster\PYZus{}labels} \PY{o}{=} \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}labels}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n}{cluster\PYZus{}centers} \PY{o}{=} \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cluster\PYZus{}centers}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\PY{n+nb}{print}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{The choosen model is = }\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{choosen\PYZus{}model}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{model\PYZus{}choosen}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+
+\PY{n}{outlier\PYZus{}indices} \PY{o}{=} \PY{n}{visualization}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+\PY{n}{outlier\PYZus{}data} \PY{o}{=} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{outlier\PYZus{}indices}\PY{p}{]}
+
+\PY{n}{anomalie\PYZus{}num}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+
+\PY{n}{add\PYZus{}features}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+
+\PY{n}{model} \PY{o}{=} \PY{n}{supervised}\PY{p}{(}\PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+
+\PY{n}{feature\PYZus{}importance}\PY{p}{(}\PY{n}{model}\PY{p}{,} \PY{n}{new\PYZus{}features\PYZus{}df}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+optimal number of clusters based on silhouette\_score = 2
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Silhouette Score (KMeans): 0.3556806955032452
+Silhouette Score (HDBSCAN): 0.5257905398719819
+Davies-Bouldin Index (KMeans): 1.0968409877739194
+Davies-Bouldin Index (HDBSCAN): 1.8031410935832595
+HDBSCAN chosen as clustering model
+The choosen model is =  HDBSCAN
+[t-SNE] Computing 121 nearest neighbors{\ldots}
+[t-SNE] Indexed 2516 samples in 0.000s{\ldots}
+[t-SNE] Computed neighbors for 2516 samples in 0.126s{\ldots}
+[t-SNE] Computed conditional probabilities for sample 1000 / 2516
+[t-SNE] Computed conditional probabilities for sample 2000 / 2516
+[t-SNE] Computed conditional probabilities for sample 2516 / 2516
+[t-SNE] Mean sigma: 2.867530
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}manifold\textbackslash{}\_t\_sne.py:780:
+FutureWarning:
+
+The default initialization in TSNE will change from 'random' to 'pca' in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}manifold\textbackslash{}\_t\_sne.py:790:
+FutureWarning:
+
+The default learning rate in TSNE will change from 200.0 to 'auto' in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+[t-SNE] KL divergence after 250 iterations with early exaggeration: 60.952942
+[t-SNE] KL divergence after 300 iterations: 0.920592
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_25_6.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+Number of anomalies: 163
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}AppData\textbackslash{}Local\textbackslash{}Temp\textbackslash{}ipykernel\_25508\textbackslash{}3231398334.py:24:
+SettingWithCopyWarning:
+
+
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row\_indexer,col\_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-
+docs/stable/user\_guide/indexing.html\#returning-a-view-versus-a-copy
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+C:\textbackslash{}Users\textbackslash{}34665\textbackslash{}anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}sklearn\textbackslash{}utils\textbackslash{}validation.py:1688:
+FutureWarning:
+
+Feature names only support names that are all strings. Got feature names with
+dtypes: ['tuple']. An error will be raised in 1.2.
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Number of anomalies found after adding new features to the dataframe:
+Anomalies: 77
+Non-Anomalies: 172
+Details of Anomalies:
+       thingy006\_color\_b                                                  \textbackslash{}
+minute                 0          10          20          30          40
+count         249.000000  249.000000  249.000000  249.000000  249.000000
+mean            9.060766    9.477839   10.144939   10.747819   11.128813
+std             8.964681    7.406790    5.334685    4.361386    3.949045
+min             1.000000    1.000000    1.089837    1.089837    1.089837
+25\%             1.449183    1.898367    7.378403    9.624319   10.343013
+50\%            10.612523   11.241379   11.690563   11.960073   12.049909
+75\%            13.397459   13.487296   13.577132   13.666969   13.846642
+max           100.000000   91.735027   42.145191   18.697822   16.811252
+
+                   thingy006\_color\_c                                      {\ldots}  \textbackslash{}
+minute          50                 0          10          20          30  {\ldots}
+count   249.000000        249.000000  249.000000  249.000000  249.000000  {\ldots}
+mean     11.676492         11.367601   12.080671   13.037913   13.980029  {\ldots}
+std       3.289981          9.920971    8.624277    6.752588    5.839967  {\ldots}
+min       1.089837          1.000000    1.000000    1.000000    1.000000  {\ldots}
+25\%      10.702359          1.538043    2.076087    9.608696   12.836957  {\ldots}
+50\%      12.229583         14.451087   14.989130   16.065217   16.065217  {\ldots}
+75\%      13.936479         17.141304   17.679348   17.679348   18.217391  {\ldots}
+max      16.182396        100.000000   90.315217   41.353261   21.445652  {\ldots}
+
+       thingy006\_eCO2             thingy006\_sound                          \textbackslash{}
+minute             40          50               0          10          20
+count      249.000000  249.000000      249.000000  249.000000  249.000000
+mean         6.965513    6.970855       22.142709   22.292896   22.403199
+std          7.396319    6.099324        7.004991    7.314033    8.340380
+min          1.443398    1.443398        9.534483    9.224138   10.775862
+25\%          3.262857    3.308726       16.827586   16.672414   16.517241
+50\%          5.525714    5.510425       20.551724   20.706897   21.172414
+75\%          8.170811    8.583629       27.224138   26.913793   27.379310
+max         85.643089   65.109189       50.034483   54.379310  100.000000
+
+                                           light\_change\_mean sound\_change\_mean
+minute          30          40          50
+count   249.000000  249.000000  249.000000        249.000000        249.000000
+mean     22.329663   22.902991   22.444329          6.301608          0.408496
+std       6.890730    8.504192    7.103731          4.692964          1.970726
+min      10.775862    9.068966   10.310345         -0.024793         -9.232759
+25\%      16.827586   17.137931   16.827586          2.538708         -0.491379
+50\%      20.551724   21.172414   20.396552          5.108284          0.232759
+75\%      27.224138   27.689655   27.689655          8.829145          1.163793
+max      43.051724   88.517241   57.948276         38.309700         11.120690
+
+[8 rows x 38 columns]
+Anomalies Detected by Feature:
+light\_change\_mean    246
+sound\_change\_mean      3
+Name: anomaly\_source, dtype: int64
+Correctly Classified Anomalies by Feature:
+light\_change\_mean: 74
+sound\_change\_mean: 3
+Accuracy: 0.9781746031746031
+Confusion Matrix:
+[[ 27   6]
+ [  5 466]]
+Classification Report:
+              precision    recall  f1-score   support
+
+     Anomaly       0.84      0.82      0.83        33
+      Normal       0.99      0.99      0.99       471
+
+    accuracy                           0.98       504
+   macro avg       0.92      0.90      0.91       504
+weighted avg       0.98      0.98      0.98       504
+
+    \end{Verbatim}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_25_10.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+('thingy006\_color\_r', 0): Importance = 0.05601269458110297
+('sound\_change\_mean', ''): Importance = 0.05408618596115239
+('light\_change\_mean', ''): Importance = 0.05156983557266566
+('thingy006\_color\_g', 0): Importance = 0.04862901628684881
+('thingy006\_color\_c', 0): Importance = 0.039879242486744855
+('thingy006\_color\_b', 0): Importance = 0.036525930861826955
+('thingy006\_color\_g', 20): Importance = 0.03638718808801918
+('thingy006\_color\_c', 50): Importance = 0.03616711974472406
+('thingy006\_color\_g', 50): Importance = 0.032296406193381935
+('thingy006\_color\_b', 20): Importance = 0.031130280174824134
+('thingy006\_color\_g', 30): Importance = 0.030490080707935276
+('thingy006\_color\_r', 20): Importance = 0.030190122408226168
+('thingy006\_eCO2', 40): Importance = 0.029335309910321967
+('thingy006\_color\_r', 30): Importance = 0.028333482198570573
+('thingy006\_color\_b', 40): Importance = 0.02727459173667728
+('thingy006\_color\_b', 50): Importance = 0.027251428376509824
+('thingy006\_color\_b', 30): Importance = 0.026254524351986337
+('thingy006\_color\_c', 20): Importance = 0.02578014126102968
+('thingy006\_eCO2', 10): Importance = 0.025721512878361517
+('thingy006\_color\_r', 50): Importance = 0.02533537177504778
+('thingy006\_eCO2', 30): Importance = 0.025095322555410037
+('thingy006\_color\_c', 30): Importance = 0.023823225060247376
+('thingy006\_sound', 40): Importance = 0.022006738146673276
+('thingy006\_color\_r', 40): Importance = 0.01990912548432571
+('thingy006\_color\_r', 10): Importance = 0.01936665231917601
+('thingy006\_eCO2', 50): Importance = 0.01768571584930684
+('thingy006\_color\_b', 10): Importance = 0.017597602093693567
+('thingy006\_color\_g', 40): Importance = 0.01753723559434248
+('thingy006\_sound', 20): Importance = 0.01733554623164679
+('thingy006\_eCO2', 20): Importance = 0.016447744797355463
+('thingy006\_eCO2', 0): Importance = 0.015833764504239838
+('thingy006\_color\_g', 10): Importance = 0.01513141811777436
+('thingy006\_sound', 10): Importance = 0.013658392809154577
+('thingy006\_color\_c', 40): Importance = 0.013363431649066851
+('thingy006\_sound', 0): Importance = 0.012946122517263202
+('thingy006\_color\_c', 10): Importance = 0.012057948834698575
+('thingy006\_sound', 50): Importance = 0.01196420983930183
+('thingy006\_sound', 30): Importance = 0.009395677149642123
+('nighttime', ''): Importance = 0.00019366089072352045
+    \end{Verbatim}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+c1}{\PYZsh{} Collect garbage to free up memory}
+\PY{k+kn}{import} \PY{n+nn}{gc}
+\PY{n}{gc}\PY{o}{.}\PY{n}{collect}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+2482
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{ }{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+
+\end{Verbatim}
+\end{tcolorbox}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}
